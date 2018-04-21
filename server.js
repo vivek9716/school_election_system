@@ -1,8 +1,8 @@
 var express = require('express');
 var app = express();
 var mongoose = require('mongoose');
-
-mongoose.connect(process.env.APP_MONGODB, function(err, db) {
+var dburi = process.env.APP_MONGODB || 'mongodb://localhost:27017/school_election_system'
+mongoose.connect(dburi, function(err, db) {
     if (err) {
         console.log('Having some error');
     } else {
