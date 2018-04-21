@@ -1,5 +1,14 @@
 var express = require('express');
 var app = express();
+var mongoose = require('mongoose');
+
+mongoose.connect(process.env.APP_MONGODB, function(err, db) {
+    if (err) {
+        console.log('Having some error');
+    } else {
+        console.log('connected successfully!');
+    }
+});
 
 var port = process.env.PORT || 3000;
 
