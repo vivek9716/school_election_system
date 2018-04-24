@@ -1,23 +1,26 @@
 var express = require('express');
 var app = express();
-var mongoose = require('mongoose');
-var dburi = process.env.APP_MONGODB || 'mongodb://localhost:27017/school_election_system'
-mongoose.connect(dburi, function(err, db) {
-    if (err) {
-        console.log('Having some error');
-    } else {
-        console.log('connected successfully!');
-    }
-});
+var bodyParser = require('body-parser');
 
-var port = process.env.PORT || 3000;
+var { PORT } = require('./env');
+var mongoose = require('./mongo-connect');
+var user = require('./Model/user');
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', function (req, res) {
     res.send('Hello world!');
 });
 
-app.listen(port, (req, res) => {
-    console.log(`Sever is running on : ${port}`);
+app.post('/register', function (req, res) {
+    user.Register(req.body).then(response => {
+        res.json(response);
+    }).catch(error => {
+        res.json(error);
+    });    
 });
 
-//mongodb://vivek.chaudhary:vivek@1989@ds253889.mlab.com:53889/school_election_system
+app.listen(PORT, (req, res) => {
+    console.log(`Sever is running on : ${PORT}`);
+});
