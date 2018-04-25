@@ -54,19 +54,14 @@ var userSchema = new Schema({
 
 var User = mongoose.model('User', userSchema);
 
-userSchema.path('email_id').validate(function(value, done) {
-	console.log(1);
-    mongoose.model('User').count({ email_id: value }, function(err, count) {
-		console.log(2);
-        if (err) {
-            return done(err);
-        }
-        // If `count` is greater than zero, "invalidate"
-        done(false);
-		return true;
+userSchema.path('email_id').validate(function (value, respond) {
+    return mongoose.model('User').count({ email_id: value }).exec().then(function (count) {		
+        return !count;
+    }).catch(function (err) {
+        throw err;
     });
-	//return false;
-}, 'Email already exists');
+}, 'Email already exists.');
+
 
 var Register = function (data) {
     return new Promise((resolve, reject) => {
@@ -80,8 +75,7 @@ var Register = function (data) {
         user.password = data.password;
         user.save(function (err, result) {
             if (err) {                
-                var errors = [];
-                //console.log(err);
+                var errors = [];                
                 if (err.name === 'ValidationError') {
                     for (field in err.errors) {
                         errors.push({ [field]: err.errors[field].message });
